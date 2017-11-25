@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
                     selectedFrag = new AlbumFragment();
                     break;
                 case R.id.navigation_songs:
+                    selectedFrag = new SongFragment();
                     break;
                 case R.id.navigation_playlists:
                     break;
