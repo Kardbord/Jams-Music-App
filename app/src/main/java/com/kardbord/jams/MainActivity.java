@@ -27,13 +27,12 @@ public class MainActivity extends AppCompatActivity {
                     selectedFrag = new SongFragment();
                     break;
                 case R.id.navigation_playlists:
+                    selectedFrag = new PlaylistFragment();
                     break;
                 default:
                     return false;
             }
-            if (selectedFrag != null) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.container, selectedFrag).commit();
-            }
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, selectedFrag).commit();
             return true;
         }
 
