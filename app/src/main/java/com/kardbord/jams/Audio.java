@@ -27,6 +27,22 @@ public class Audio implements Serializable {
                 Objects.equals(m_album, MediaStore.UNKNOWN_STRING));
     }
 
+    public boolean artistUnknown() {
+        return (Objects.equals(m_artist, MediaStore.UNKNOWN_STRING));
+    }
+
+    public boolean albumUnknown() {
+        return (Objects.equals(m_album, MediaStore.UNKNOWN_STRING));
+    }
+
+    public boolean titleUnknown() {
+        return (Objects.equals(m_title, MediaStore.UNKNOWN_STRING));
+    }
+
+    public boolean dataUnknown() {
+        return (Objects.equals(m_data, MediaStore.UNKNOWN_STRING));
+    }
+
     public String getData() { return m_data; }
 
     public void setData(String data) { m_data = data; }
