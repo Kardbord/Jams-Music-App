@@ -41,7 +41,7 @@ public class AlbumFragment extends Fragment {
 
         loadAudio();
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, getAlbums());
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_selectable_list_item, getAlbums());
 
         m_listView.setAdapter(adapter);
 

@@ -40,7 +40,7 @@ public class ArtistFragment extends Fragment {
 
         loadAudio();
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, getArtists());
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_selectable_list_item, getArtists());
         m_listView.setAdapter(adapter);
 
         return v;
