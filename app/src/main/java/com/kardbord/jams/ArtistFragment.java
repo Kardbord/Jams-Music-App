@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 
 
@@ -51,6 +52,7 @@ public class ArtistFragment extends Fragment {
             if (!a.containsUnknown()) hashedArtists.put(a.getArtist(), a.getArtist());
         }
         ArrayList<String> artists = new ArrayList<>(hashedArtists.values());
+        Collections.sort(artists);
         return artists;
     }
 
