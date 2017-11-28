@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 
 /**
@@ -45,10 +46,11 @@ public class ArtistFragment extends Fragment {
     }
 
     private ArrayList<String> getArtists() {
-        ArrayList<String> artists = new ArrayList<>();
+        Hashtable<String, String> hashedArtists = new Hashtable<>();
         for (Audio a : m_audioList) {
-            if (!a.containsUnknown()) artists.add(a.getArtist());
+            if (!a.containsUnknown()) hashedArtists.put(a.getArtist(), a.getArtist());
         }
+        ArrayList<String> artists = new ArrayList<>(hashedArtists.values());
         return artists;
     }
 
