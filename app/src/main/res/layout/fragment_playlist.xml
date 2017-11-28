@@ -7,6 +7,13 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/playlists" />
+        android:text="@string/playlists"/>
+
+    <ListView
+        android:id="@+id/playlistList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </ListView>
 
 </FrameLayout>
