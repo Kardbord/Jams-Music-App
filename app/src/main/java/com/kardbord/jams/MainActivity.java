@@ -15,6 +15,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            // TODO: keep an array of Fragments and swap them out
+            // TODO: this will allow for keeping the audio database here rather than generating it for every fragment
             Fragment selectedFrag = null;
             switch (item.getItemId()) {
                 case R.id.navigation_artists:
