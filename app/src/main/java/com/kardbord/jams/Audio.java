@@ -1,6 +1,9 @@
 package com.kardbord.jams;
 
+import android.provider.MediaStore;
+
 import java.io.Serializable;
+import java.util.Objects;
 
 
 public class Audio implements Serializable {
@@ -15,6 +18,13 @@ public class Audio implements Serializable {
         this.m_title = title;
         this.m_album = album;
         this.m_artist = artist;
+    }
+
+    public boolean containsUnknown() {
+        return (Objects.equals(m_artist, MediaStore.UNKNOWN_STRING) ||
+                Objects.equals(m_data, MediaStore.UNKNOWN_STRING) ||
+                Objects.equals(m_title, MediaStore.UNKNOWN_STRING) ||
+                Objects.equals(m_album, MediaStore.UNKNOWN_STRING));
     }
 
     public String getData() { return m_data; }

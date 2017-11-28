@@ -47,7 +47,7 @@ public class ArtistFragment extends Fragment {
     private ArrayList<String> getArtists() {
         ArrayList<String> artists = new ArrayList<>();
         for (Audio a : m_audioList) {
-            artists.add(a.getArtist());
+            if (!a.containsUnknown()) artists.add(a.getArtist());
         }
         return artists;
     }
