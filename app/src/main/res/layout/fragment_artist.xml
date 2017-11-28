@@ -5,7 +5,7 @@
     tools:context="com.kardbord.jams.ArtistFragment">
 
     <ListView
-        android:id="@+id/mListView"
+        android:id="@+id/artistList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

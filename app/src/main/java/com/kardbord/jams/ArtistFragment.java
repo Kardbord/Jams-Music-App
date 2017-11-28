@@ -36,7 +36,7 @@ public class ArtistFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_artist, container, false);
-        m_listView = v.findViewById(R.id.mListView);
+        m_listView = v.findViewById(R.id.artistList);
 
         loadAudio();
 
@@ -49,7 +49,7 @@ public class ArtistFragment extends Fragment {
     private ArrayList<String> getArtists() {
         Hashtable<String, String> hashedArtists = new Hashtable<>();
         for (Audio a : m_audioList) {
-            if (!a.containsUnknown()) hashedArtists.put(a.getArtist(), a.getArtist());
+            if (!a.artistUnknown()) hashedArtists.put(a.getArtist(), a.getArtist());
         }
         ArrayList<String> artists = new ArrayList<>(hashedArtists.values());
         Collections.sort(artists);
