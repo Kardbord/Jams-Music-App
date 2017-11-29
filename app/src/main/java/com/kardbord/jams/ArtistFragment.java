@@ -20,10 +20,6 @@ import java.util.Hashtable;
  */
 public class ArtistFragment extends Fragment {
 
-    public interface mediaGetter {
-        ArrayList<Audio> getAudioList();
-    }
-
     private mediaGetter m_callback;
 
     private ArrayList<Audio> m_audioList;
