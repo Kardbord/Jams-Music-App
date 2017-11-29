@@ -20,7 +20,7 @@ import java.util.Hashtable;
  */
 public class AlbumFragment extends Fragment {
 
-    private mediaGetter m_callback;
+    private MediaGetter m_callback;
 
     private ArrayList<Audio> m_audioList;
 
@@ -34,8 +34,8 @@ public class AlbumFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (!(context instanceof mediaGetter)) throw new AssertionError();
-        m_callback = (mediaGetter) context;
+        if (!(context instanceof MediaGetter)) throw new AssertionError();
+        m_callback = (MediaGetter) context;
         m_audioList = m_callback.getAudioList();
     }
 
