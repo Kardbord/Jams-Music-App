@@ -20,6 +20,11 @@ import java.util.Hashtable;
  */
 public class ArtistFragment extends Fragment {
 
+    // TODO: implement getAlbums(Artist), getSongs(Artist), and getSongs(Album)
+    // TODO: when an artist is clicked, repopulate m_listView using getAlbums
+    // TODO: when 'all songs' is clicked, repopulate m_listView using getSongs
+    // TODO: when an album is clicked, repopulate m_listView using getSongs
+
     private ArrayList<Audio> m_audioList;
 
     public ArtistFragment() {
