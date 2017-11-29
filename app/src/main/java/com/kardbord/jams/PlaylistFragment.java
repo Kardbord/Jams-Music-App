@@ -1,11 +1,8 @@
 package com.kardbord.jams;
 
 
-import android.content.ContentResolver;
-import android.database.Cursor;
-import android.net.Uri;
+import android.content.Context;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +19,14 @@ public class PlaylistFragment extends Fragment {
 
     private ArrayList<Audio> m_audioList;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (!(context instanceof MediaGetter)) throw new AssertionError();
+        MediaGetter m_callback = (MediaGetter) context;
+        m_audioList = m_callback.getAudioList();
+    }
+
 
     public PlaylistFragment() {
         // Required empty public constructor
@@ -34,32 +39,9 @@ public class PlaylistFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_playlist, container, false);
         ListView m_listView = v.findViewById(R.id.playlistList);
 
-        loadAudio();
-
         return v;
     }
 
     // TODO: implement playlist somehow...
-
-    private void loadAudio() {
-        ContentResolver contentResolver = getActivity().getContentResolver();
-
-        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
-        String sortOrder = MediaStore.Audio.Media.TITLE + " ASC";
-        Cursor cursor = contentResolver.query(uri, null, selection, null, sortOrder);
-
-        if (cursor != null && cursor.getCount() > 0) {
-            m_audioList = new ArrayList<>();
-            while (cursor.moveToNext()) {
-                String data = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
-                String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-                String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
-                String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                m_audioList.add(new Audio(data, title, album, artist));
-            }
-        }
-        if (cursor != null) cursor.close();
-    }
 
 }
