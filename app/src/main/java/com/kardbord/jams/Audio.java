@@ -3,10 +3,13 @@ package com.kardbord.jams;
 import android.provider.MediaStore;
 
 import java.io.Serializable;
+import java.util.Hashtable;
 import java.util.Objects;
 
 
 public class Audio implements Serializable {
+
+    private Hashtable<String, String> m_playlists;
 
     private String m_data;
     private String m_title;
@@ -18,7 +21,18 @@ public class Audio implements Serializable {
         this.m_title = title;
         this.m_album = album;
         this.m_artist = artist;
+        m_playlists = new Hashtable<>();
     }
+
+    public void addToPlaylist(String playlist) {
+        m_playlists.put(playlist, playlist);
+    }
+
+    public void removeFromPlayList(String playlist) {
+        m_playlists.remove(playlist);
+    }
+
+    public Hashtable<String, String> getPlaylists() { return m_playlists; }
 
     public boolean containsUnknown() {
         return (Objects.equals(m_artist, MediaStore.UNKNOWN_STRING) ||
