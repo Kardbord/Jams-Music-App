@@ -6,7 +6,7 @@
     <color name="secondaryColor">#00695c</color>
     <color name="secondaryLightColor" tools:keep="@color/secondaryLightColor">#439889</color>
     <color name="secondaryDarkColor">#003d33</color>
-    <color name="primaryTextColor">#00acc1</color>
+    <color name="primaryTextColor">#2ce2de</color>
     <color name="secondaryTextColor" tools:keep="@color/secondaryTextColor">#263238</color>
     <color name="backgroundColor">#848484</color>
 </resources>
