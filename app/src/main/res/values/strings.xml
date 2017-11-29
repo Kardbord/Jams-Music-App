@@ -4,6 +4,7 @@
     <string name="albums">Albums</string>
     <string name="songs">Songs</string>
     <string name="playlists">Playlists</string>
+    <string name="create_new_playlist">Create New Playlist</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 </resources>

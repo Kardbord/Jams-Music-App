@@ -16,9 +16,6 @@ import java.util.Hashtable;
 
 public class MainActivity extends AppCompatActivity implements MediaGetter {
 
-    // Hashtable where key and value is name of a playlist
-    private Hashtable<String, String> m_playLists;
-
     private ArrayList<Audio> m_audioList;
 
     private Hashtable<String, Fragment> m_fragments;
@@ -59,7 +56,6 @@ public class MainActivity extends AppCompatActivity implements MediaGetter {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        m_playLists = new Hashtable<>();
         loadAudio();
 
         m_fragments = new Hashtable<>();
@@ -109,10 +105,5 @@ public class MainActivity extends AppCompatActivity implements MediaGetter {
     @Override
     public ArrayList<Audio> getAudioList() {
         return m_audioList;
-    }
-
-    @Override
-    public Hashtable<String, String> getPlaylists() {
-        return m_playLists;
     }
 }
