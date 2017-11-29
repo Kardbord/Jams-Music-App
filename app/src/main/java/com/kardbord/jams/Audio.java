@@ -1,14 +1,12 @@
 package com.kardbord.jams;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.provider.MediaStore;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 
-public class Audio implements Serializable, Parcelable {
+public class Audio implements Serializable {
 
     private String m_data;
     private String m_title;
@@ -21,25 +19,6 @@ public class Audio implements Serializable, Parcelable {
         this.m_album = album;
         this.m_artist = artist;
     }
-
-    protected Audio(Parcel in) {
-        m_data = in.readString();
-        m_title = in.readString();
-        m_album = in.readString();
-        m_artist = in.readString();
-    }
-
-    public static final Creator<Audio> CREATOR = new Creator<Audio>() {
-        @Override
-        public Audio createFromParcel(Parcel in) {
-            return new Audio(in);
-        }
-
-        @Override
-        public Audio[] newArray(int size) {
-            return new Audio[size];
-        }
-    };
 
     public boolean containsUnknown() {
         return (Objects.equals(m_artist, MediaStore.UNKNOWN_STRING) ||
@@ -79,17 +58,4 @@ public class Audio implements Serializable, Parcelable {
     public String getArtist() { return m_artist; }
 
     public void setArtist(String artist) { m_artist = artist; }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(m_data);
-        parcel.writeString(m_title);
-        parcel.writeString(m_album);
-        parcel.writeString(m_artist);
-    }
 }
