@@ -20,11 +20,7 @@ import java.util.Hashtable;
  */
 public class ArtistFragment extends Fragment {
 
-    private MediaGetter m_callback;
-
     private ArrayList<Audio> m_audioList;
-
-    private ListView m_listView;
 
     public ArtistFragment() {
         // Required empty public constructor
@@ -34,7 +30,7 @@ public class ArtistFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (!(context instanceof MediaGetter)) throw new AssertionError();
-        m_callback = (MediaGetter) context;
+        MediaGetter m_callback = (MediaGetter) context;
         m_audioList = m_callback.getAudioList();
     }
 
@@ -43,7 +39,7 @@ public class ArtistFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_artist, container, false);
-        m_listView = v.findViewById(R.id.artistList);
+        ListView m_listView = v.findViewById(R.id.artistList);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_selectable_list_item, getArtists());
         m_listView.setAdapter(adapter);

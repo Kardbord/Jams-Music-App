@@ -18,11 +18,11 @@ public class MainActivity extends AppCompatActivity implements MediaGetter {
 
     private ArrayList<Audio> m_audioList;
 
-    Hashtable<String, Fragment> m_fragments;
-    public final String ARTIST_FRAG = "ARTIST";
-    public final String ALBUM_FRAG = "ALBUM";
-    public final String SONG_FRAG = "SONG";
-    public final String PLAYLIST_FRAG = "PLAYLIST";
+    private Hashtable<String, Fragment> m_fragments;
+    private final String ARTIST_FRAG = "ARTIST";
+    private final String ALBUM_FRAG = "ALBUM";
+    private final String SONG_FRAG = "SONG";
+    private final String PLAYLIST_FRAG = "PLAYLIST";
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {

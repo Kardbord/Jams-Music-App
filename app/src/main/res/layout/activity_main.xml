@@ -9,7 +9,6 @@
     tools:context="com.kardbord.jams.MainActivity">
 
     <FrameLayout
-        android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="0dp">
 

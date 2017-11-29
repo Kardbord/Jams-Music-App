@@ -1,13 +1,9 @@
 <resources>
     <string name="app_name">Jams!</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
     <string name="artists">Artists</string>
     <string name="albums">Albums</string>
     <string name="songs">Songs</string>
     <string name="playlists">Playlists</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

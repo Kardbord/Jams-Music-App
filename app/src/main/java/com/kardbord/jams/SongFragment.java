@@ -20,11 +20,7 @@ import java.util.Hashtable;
  */
 public class SongFragment extends Fragment {
 
-    private MediaGetter m_callback;
-
     private ArrayList<Audio> m_audioList;
-
-    private ListView m_listView;
 
     public SongFragment() {
         // Required empty public constructor
@@ -34,7 +30,7 @@ public class SongFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (!(context instanceof MediaGetter)) throw new AssertionError();
-        m_callback = (MediaGetter) context;
+        MediaGetter m_callback = (MediaGetter) context;
         m_audioList = m_callback.getAudioList();
     }
 
@@ -43,7 +39,7 @@ public class SongFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_song, container, false);
-        m_listView = v.findViewById(R.id.songList);
+        ListView m_listView = v.findViewById(R.id.songList);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_selectable_list_item, getSongs());
         m_listView.setAdapter(adapter);
@@ -51,7 +47,7 @@ public class SongFragment extends Fragment {
         return v;
     }
 
-    ArrayList<String> getSongs() {
+    private ArrayList<String> getSongs() {
         Hashtable<String, String> hashedSongs = new Hashtable<>();
         for (Audio a : m_audioList) {
             if (!a.titleUnknown()) hashedSongs.put(a.getTitle(), a.getTitle());
