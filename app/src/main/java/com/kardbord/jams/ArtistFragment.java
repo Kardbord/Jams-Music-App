@@ -86,6 +86,7 @@ public class ArtistFragment extends Fragment {
             String album = m_listView.getItemAtPosition(position).toString();
             ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_selectable_list_item, getSongs(album));
             m_listView.setAdapter(adapter);
+            // TODO: set m_listView click listener to play the selected song
             m_backButton.setOnClickListener(backToAlbumOnClick);
         }
     };
