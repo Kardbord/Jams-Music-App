@@ -6,7 +6,7 @@
     tools:context="com.kardbord.jams.ArtistFragment">
 
     <Button
-        android:id="@+id/back_button"
+        android:id="@+id/artist_frag_back_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/back"

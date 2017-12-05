@@ -51,7 +51,7 @@ public class ArtistFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_artist, container, false);
         m_listView = v.findViewById(R.id.artistList);
 
-        m_backButton = v.findViewById(R.id.back_button);
+        m_backButton = v.findViewById(R.id.artist_frag_back_button);
         setButtonProperties(View.INVISIBLE, false);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_selectable_list_item, getArtists());
