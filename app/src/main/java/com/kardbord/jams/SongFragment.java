@@ -52,6 +52,7 @@ public class SongFragment extends Fragment {
         for (Audio a : m_audioList) {
             if (!a.titleUnknown()) hashedSongs.put(a.getTitle(), a.getTitle());
         }
+        // TODO: add listener to play a song on item clicked
         ArrayList<String> songs = new ArrayList<>(hashedSongs.values());
         Collections.sort(songs);
         return songs;
