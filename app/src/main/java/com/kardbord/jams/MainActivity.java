@@ -14,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -89,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements MediaGetter {
         // Manually set first fragment
         getSupportFragmentManager().beginTransaction().replace(R.id.container, m_fragments.get(ARTIST_FRAG)).commit();
 
-        playAudio("https://upload.wikimedia.org/wikipedia/commons/6/6c/Grieg_Lyric_Pieces_Kobold.ogg");
+        playAudio(m_audioList.get(0).getData());
     }
 
     private ServiceConnection m_serviceConnection = new ServiceConnection() {
@@ -134,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements MediaGetter {
     private void playAudio(String media) {
         // Check if service is active
         if (!m_serviceBound) {
+            Log.i("Media Player", "PlayAudio");
             Intent playerIntent = new Intent(this, MediaPlayerService.class);
             playerIntent.putExtra("media", media);
             startService(playerIntent);
