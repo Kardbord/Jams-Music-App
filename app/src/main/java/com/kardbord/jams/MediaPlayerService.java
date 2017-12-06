@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.Objects;
 
 // This class is based off of a tutorial found at
 // https://www.sitepoint.com/a-step-by-step-guide-to-building-an-android-audio-player-app/
@@ -20,6 +21,37 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         MediaPlayer.OnInfoListener, MediaPlayer.OnBufferingUpdateListener,
         AudioManager.OnAudioFocusChangeListener
 {
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (m_mediaPlayer != null) {
+            stopMedia();
+            m_mediaPlayer.release();
+        }
+        removeAudioFocus();
+    }
+
+    // System calls this method when an activity requests the service be started
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        try {
+            // an audio file is passed to the service through putExtra()
+            //noinspection ConstantConditions
+            m_mediaFile = intent.getExtras().getString("media");
+        } catch (NullPointerException e) {
+            stopSelf();
+        }
+
+        // Request audio focus
+        if (!requestAudioFocus()) {
+            stopSelf();
+        }
+
+        if (m_mediaFile != null && !Objects.equals(m_mediaFile, "")) initMediaPlayer();
+
+        return super.onStartCommand(intent, flags, startId);
+    }
 
     private MediaPlayer m_mediaPlayer;
 
