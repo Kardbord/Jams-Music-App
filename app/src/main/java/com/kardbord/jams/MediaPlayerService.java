@@ -1,7 +1,9 @@
 package com.kardbord.jams;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
@@ -20,6 +22,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 {
 
     private MediaPlayer m_mediaPlayer;
+
+    private AudioManager m_audioManager;
 
     // path to the audio file
     private String m_mediaFile;
@@ -134,6 +138,40 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     @Override
     public void onAudioFocusChange(int focusChange) {
         // Invoked when the audio focus of the system is updated
+        switch (focusChange) {
+            case AudioManager.AUDIOFOCUS_GAIN:
+                // resume playback
+                if (m_mediaPlayer == null) initMediaPlayer();
+                else if (!m_mediaPlayer.isPlaying()) m_mediaPlayer.start();
+                m_mediaPlayer.setVolume(1.0f, 1.0f);
+                break;
+            case AudioManager.AUDIOFOCUS_LOSS:
+                // Lost focus for an unbounded amount of time: stop playback and release media player
+                if (m_mediaPlayer.isPlaying()) m_mediaPlayer.stop();
+                m_mediaPlayer.release();
+                m_mediaPlayer = null;
+                break;
+            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                // Lost focus for a short time, but need to stop playback
+                // We won't release playback because playback is likely to resume
+                if (m_mediaPlayer.isPlaying()) m_mediaPlayer.pause();
+                break;
+            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                // Lost focus for a short time, but it's okay to keep playing at an attenuated level
+                if (m_mediaPlayer.isPlaying()) m_mediaPlayer.setVolume(0.1f, 0.1f);
+                break;
+        }
+    }
+
+    private boolean requestAudioFocus() {
+        m_audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        assert m_audioManager != null;
+        int result = m_audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        return result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
+    }
+
+    private boolean removeAudioFocus() {
+        return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == m_audioManager.abandonAudioFocus(this);
     }
 
 
