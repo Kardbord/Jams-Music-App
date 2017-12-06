@@ -109,6 +109,28 @@ public class MainActivity extends AppCompatActivity implements MediaGetter {
         }
     };
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean("ServiceState", m_serviceBound);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (m_serviceBound) {
+            unbindService(m_serviceConnection);
+            // service is active
+            m_player.stopSelf();
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        m_serviceBound = savedInstanceState.getBoolean("ServiceState");
+    }
+
     private void playAudio(String media) {
         // Check if service is active
         if (!m_serviceBound) {
