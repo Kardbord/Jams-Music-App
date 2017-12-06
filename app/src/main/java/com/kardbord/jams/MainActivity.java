@@ -1,15 +1,21 @@
 package com.kardbord.jams;
 
+import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -17,6 +23,9 @@ import java.util.Hashtable;
 public class MainActivity extends AppCompatActivity implements MediaGetter {
 
     private ArrayList<Audio> m_audioList;
+
+    private MediaPlayerService m_player;
+    boolean m_serviceBound = false;
 
     private Hashtable<String, Fragment> m_fragments;
     private final String ARTIST_FRAG = "ARTIST";
@@ -79,6 +88,37 @@ public class MainActivity extends AppCompatActivity implements MediaGetter {
 
         // Manually set first fragment
         getSupportFragmentManager().beginTransaction().replace(R.id.container, m_fragments.get(ARTIST_FRAG)).commit();
+
+        playAudio("https://upload.wikimedia.org/wikipedia/commons/6/6c/Grieg_Lyric_Pieces_Kobold.ogg");
+    }
+
+    private ServiceConnection m_serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            // We've bound to LocalService, case the IBinder and et LocalService instance
+            MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
+            m_player = binder.getService();
+            m_serviceBound = true;
+
+            Toast.makeText(MainActivity.this, "Service Bound", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            m_serviceBound = false;
+        }
+    };
+
+    private void playAudio(String media) {
+        // Check if service is active
+        if (!m_serviceBound) {
+            Intent playerIntent = new Intent(this, MediaPlayerService.class);
+            playerIntent.putExtra("media", media);
+            startService(playerIntent);
+            bindService(playerIntent, m_serviceConnection, Context.BIND_AUTO_CREATE);
+        } else {
+            // Service is active, send media with Broadcast Receiver
+        }
     }
 
     private void loadAudio() {
