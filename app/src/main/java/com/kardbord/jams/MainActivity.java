@@ -14,7 +14,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -27,6 +26,8 @@ public class MainActivity extends AppCompatActivity implements MediaGetter {
 
     private MediaPlayerService m_player;
     boolean m_serviceBound = false;
+
+    public static final String Broadcast_PLAY_NEW_AUDIO = "com.kardbord.jams.PlayNewAudio";
 
     private Hashtable<String, Fragment> m_fragments;
     private final String ARTIST_FRAG = "ARTIST";
@@ -89,8 +90,6 @@ public class MainActivity extends AppCompatActivity implements MediaGetter {
 
         // Manually set first fragment
         getSupportFragmentManager().beginTransaction().replace(R.id.container, m_fragments.get(ARTIST_FRAG)).commit();
-
-        playAudio(m_audioList.get(0).getData());
     }
 
     private ServiceConnection m_serviceConnection = new ServiceConnection() {
@@ -132,16 +131,25 @@ public class MainActivity extends AppCompatActivity implements MediaGetter {
         m_serviceBound = savedInstanceState.getBoolean("ServiceState");
     }
 
-    private void playAudio(String media) {
-        // Check if service is active
+    private void playAudio(int audioIndex) {
         if (!m_serviceBound) {
-            Log.i("Media Player", "PlayAudio");
+            // Store serializable audioList to shared preferences
+            StorageUtil storage = new StorageUtil(getApplicationContext());
+            storage.storeAudio(m_audioList);
+            storage.storeAudioIndex(audioIndex);
+
             Intent playerIntent = new Intent(this, MediaPlayerService.class);
-            playerIntent.putExtra("media", media);
             startService(playerIntent);
             bindService(playerIntent, m_serviceConnection, Context.BIND_AUTO_CREATE);
         } else {
-            // Service is active, send media with Broadcast Receiver
+            // Store the new audioIndex to SharedPreferences
+            StorageUtil storage = new StorageUtil(getApplicationContext());
+            storage.storeAudioIndex(audioIndex);
+
+            // Service is active
+            // Send a broadcast to the service -> PLAY_NEW_AUDIO
+            Intent broadcastIntent = new Intent(Broadcast_PLAY_NEW_AUDIO);
+            sendBroadcast(broadcastIntent);
         }
     }
 
