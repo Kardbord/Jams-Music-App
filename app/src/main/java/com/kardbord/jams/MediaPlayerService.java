@@ -64,9 +64,17 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         try {
-            // an audio file is passed to the service through putExtra()
-            //noinspection ConstantConditions
-            m_mediaFile = intent.getExtras().getString("media");
+            // Load data from SharedPreferences
+            StorageUtil storage = new StorageUtil(getApplicationContext());
+            audioList = storage.loadAudio();
+            audioIndex = storage.loadAudioIndex();
+
+            if (audioIndex != -1 && audioIndex < audioList.size()) {
+                // index is in a valid range
+                activeAudio = audioList.get(audioIndex);
+            } else {
+                stopSelf();
+            }
         } catch (NullPointerException e) {
             stopSelf();
         }
@@ -76,8 +84,18 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             stopSelf();
         }
 
-        if (m_mediaFile != null && !Objects.equals(m_mediaFile, "")) initMediaPlayer();
-
+        if (mediaSessionManager == null) {
+            try {
+                initMediaSession();
+                initMediaPlayer();
+            }
+            catch (RemoteException e) {
+                e.printStackTrace();
+                stopSelf();
+            }
+            buildNotification(PlaybackStatus.PLAYING);
+        }
+        handleincomingActions(intent);
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -370,6 +388,23 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         return null;
     }
 
+    private void handleincomingActions(Intent playbackAction) {
+        if (playbackAction == null || playbackAction.getAction() == null) return;
+
+        String actionString = playbackAction.getAction();
+        if (actionString.equalsIgnoreCase(ACTION_PLAY)) {
+            transportControls.play();
+        } else if (actionString.equalsIgnoreCase(ACTION_PAUSE)) {
+            transportControls.pause();
+        } else if (actionString.equalsIgnoreCase(ACTION_NEXT)) {
+            transportControls.skipToNext();
+        } else if (actionString.equalsIgnoreCase(ACTION_PREVIOUS)) {
+            transportControls.skipToPrevious();
+        } else if (actionString.equalsIgnoreCase(ACTION_STOP)) {
+            transportControls.stop();
+        }
+    }
+
 
     private void initMediaPlayer() {
         m_mediaPlayer = new MediaPlayer();
@@ -385,7 +420,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
         m_mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         try {
-            m_mediaPlayer.setDataSource(m_mediaFile);
+            m_mediaPlayer.setDataSource(activeAudio.getData());
         } catch (IOException e) {
             e.printStackTrace();
             stopSelf();
