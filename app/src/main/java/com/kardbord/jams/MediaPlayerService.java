@@ -1,6 +1,5 @@
 package com.kardbord.jams;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -8,7 +7,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.drm.DrmStore;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
@@ -28,7 +26,6 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Objects;
 
 // This class is based off of a tutorial found at
 // https://www.sitepoint.com/a-step-by-step-guide-to-building-an-android-audio-player-app/
@@ -102,9 +99,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     private MediaPlayer m_mediaPlayer;
 
     private AudioManager m_audioManager;
-
-    // path to the audio file
-    private String m_mediaFile;
 
     private int resumePosition;
 
@@ -340,7 +334,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
         Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.albumart); // TODO: replace with album art
 
-        NotificationCompat.Builder notificationBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(this)
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setShowWhen(false)
                 .setStyle(new android.support.v7.app.NotificationCompat.MediaStyle().setMediaSession(mediaSession.getSessionToken()).setShowActionsInCompactView(0, 1, 2))
                 .setColor(getResources().getColor(R.color.primaryColor))
@@ -350,10 +344,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 .setContentTitle(activeAudio.getAlbum())
                 .setContentInfo(activeAudio.getTitle())
                 .addAction(android.R.drawable.ic_media_previous, "previous", playbackAction(3))
-                .addAction(android.R.drawable.ic_media_pause, "pause", play_pauseAction)
+                .addAction(notificationAction, "pause", play_pauseAction)
                 .addAction(android.R.drawable.ic_media_next, "next", playbackAction(2));
 
-        assert ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)) != null;
+        assert getSystemService(Context.NOTIFICATION_SERVICE) != null;
+        //noinspection ConstantConditions
         ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notificationBuilder.build());
     }
 
@@ -544,6 +539,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         return result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     private boolean removeAudioFocus() {
         return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == m_audioManager.abandonAudioFocus(this);
     }
