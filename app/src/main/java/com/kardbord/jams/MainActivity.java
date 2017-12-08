@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements MediaGetter {
         m_serviceBound = savedInstanceState.getBoolean("ServiceState");
     }
 
-    private void playAudio(int audioIndex) {
+    public void playAudio(int audioIndex) {
         if (!m_serviceBound) {
             // Store serializable audioList to shared preferences
             StorageUtil storage = new StorageUtil(getApplicationContext());
@@ -177,5 +177,10 @@ public class MainActivity extends AppCompatActivity implements MediaGetter {
     @Override
     public ArrayList<Audio> getAudioList() {
         return m_audioList;
+    }
+
+    @Override
+    public void playMedia(int audioIndex) {
+        playAudio(audioIndex);
     }
 }

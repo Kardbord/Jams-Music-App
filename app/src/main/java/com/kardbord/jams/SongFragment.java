@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -22,6 +23,15 @@ public class SongFragment extends Fragment {
 
     private ArrayList<Audio> m_audioList;
 
+    private MediaGetter m_callback;
+
+    private ListView m_listView;
+
+    private ArrayList<String> m_songs = new ArrayList<>();
+
+    // Value is position in m_audioList, key is title
+    private Hashtable<String, Integer> m_hashedSongs = new Hashtable<>();
+
     public SongFragment() {
         // Required empty public constructor
     }
@@ -30,7 +40,7 @@ public class SongFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (!(context instanceof MediaGetter)) throw new AssertionError();
-        MediaGetter m_callback = (MediaGetter) context;
+        m_callback = (MediaGetter) context;
         m_audioList = m_callback.getAudioList();
     }
 
@@ -39,23 +49,33 @@ public class SongFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_song, container, false);
-        ListView m_listView = v.findViewById(R.id.songList);
+        m_listView = v.findViewById(R.id.songList);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_selectable_list_item, getSongs());
+        initSongData();
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_selectable_list_item, m_songs);
         m_listView.setAdapter(adapter);
+
+        m_listView.setOnItemClickListener(onSongClicked);
 
         return v;
     }
 
-    private ArrayList<String> getSongs() {
-        Hashtable<String, String> hashedSongs = new Hashtable<>();
-        for (Audio a : m_audioList) {
-            if (!a.titleUnknown()) hashedSongs.put(a.getTitle(), a.getTitle());
+    private AdapterView.OnItemClickListener onSongClicked = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            String title = m_listView.getItemAtPosition(position).toString();
+            m_callback.playMedia(m_hashedSongs.get(title));
         }
-        // TODO: add listener to play a song on item clicked
-        ArrayList<String> songs = new ArrayList<>(hashedSongs.values());
-        Collections.sort(songs);
-        return songs;
-    }
+    };
 
+    private void initSongData() {
+        for (int i = 0; i < m_audioList.size(); ++i) {
+            if (!m_audioList.get(i).titleUnknown()) {
+                m_hashedSongs.put(m_audioList.get(i).getTitle(), i);
+                m_songs.add(m_audioList.get(i).getTitle());
+            }
+        }
+        Collections.sort(m_songs);
+    }
 }
