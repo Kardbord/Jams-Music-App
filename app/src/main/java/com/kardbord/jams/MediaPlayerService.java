@@ -16,7 +16,6 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -33,6 +32,74 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnSeekCompleteListener,
         MediaPlayer.OnInfoListener, MediaPlayer.OnBufferingUpdateListener,
         AudioManager.OnAudioFocusChangeListener {
+
+    public class LocalBinder extends Binder {
+        public MediaPlayerService getService() {
+            return MediaPlayerService.this;
+        }
+    }
+
+    private MediaPlayer m_mediaPlayer;
+
+    private AudioManager m_audioManager;
+
+    private int resumePosition;
+
+    public static final String ACTION_PLAY = "com.kardbord.jams.ACTION_PLAY";
+    public static final String ACTION_PAUSE = "com.kardbord.jams.ACTION_PAUSE";
+    public static final String ACTION_PREVIOUS = "com.kardbord.jams.ACTION_PREVIOUS";
+    public static final String ACTION_NEXT = "com.kardbord.jams.ACTION_NEXT";
+    public static final String ACTION_STOP = "com.kardbord.jams.ACTION_STOP";
+
+    // MediaSession
+    private MediaSessionManager mediaSessionManager;
+    private MediaSessionCompat mediaSession;
+    private MediaControllerCompat.TransportControls transportControls;
+
+    // AudioPlayer notification ID
+    private static final int NOTIFICATION_ID = 101;
+
+    private ArrayList<Audio> audioList;
+    private int audioIndex = -1;
+    private Audio activeAudio;
+
+    private IBinder iBinder = new LocalBinder();
+
+    private boolean ongoingCall = false;
+    private PhoneStateListener phoneStateListener;
+    private TelephonyManager telephonyManager;
+
+    public enum PlaybackStatus {
+        PLAYING,
+        PAUSED
+    }
+
+    private BroadcastReceiver becomingNoisyReciever = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            pauseMedia();
+            buildNotification(PlaybackStatus.PAUSED);
+        }
+    };
+
+    private BroadcastReceiver playNewAudio = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            audioIndex = new StorageUtil(getApplicationContext()).loadAudioIndex();
+            if (audioIndex != -1 && audioIndex < audioList.size()) {
+                activeAudio = audioList.get(audioIndex);
+            } else {
+                stopSelf();
+            }
+
+            // A PLAY_NEW_AUDIO action received
+            stopMedia();
+            m_mediaPlayer.reset();
+            initMediaPlayer();
+            updateMetaData();
+            buildNotification(PlaybackStatus.PLAYING);
+        }
+    };
 
     @Override
     public void onDestroy() {
@@ -103,49 +170,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private MediaPlayer m_mediaPlayer;
-
-    private AudioManager m_audioManager;
-
-    private int resumePosition;
-
-    public static final String ACTION_PLAY = "com.kardbord.jams.ACTION_PLAY";
-    public static final String ACTION_PAUSE = "com.kardbord.jams.ACTION_PAUSE";
-    public static final String ACTION_PREVIOUS = "com.kardbord.jams.ACTION_PREVIOUS";
-    public static final String ACTION_NEXT = "com.kardbord.jams.ACTION_NEXT";
-    public static final String ACTION_STOP = "com.kardbord.jams.ACTION_STOP";
-
-    // MediaSession
-    private MediaSessionManager mediaSessionManager;
-    private MediaSessionCompat mediaSession;
-    private MediaControllerCompat.TransportControls transportControls;
-
-    // AudioPlayer notification ID
-    private static final int NOTIFICATION_ID = 101;
-
-    private ArrayList<Audio> audioList;
-    private int audioIndex = -1;
-    private Audio activeAudio;
-
-    private IBinder iBinder = new LocalBinder();
-
-    private boolean ongoingCall = false;
-    private PhoneStateListener phoneStateListener;
-    private TelephonyManager telephonyManager;
-
-    public enum PlaybackStatus {
-        PLAYING,
-        PAUSED
-    }
-
-    private BroadcastReceiver becomingNoisyReciever = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            pauseMedia();
-            buildNotification(PlaybackStatus.PAUSED);
-        }
-    };
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -159,25 +183,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         // Listen for new Audio to play -- BroadcastReceiver
         register_playNewAudio();
     }
-
-    private BroadcastReceiver playNewAudio = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            audioIndex = new StorageUtil(getApplicationContext()).loadAudioIndex();
-            if (audioIndex != -1 && audioIndex < audioList.size()) {
-                activeAudio = audioList.get(audioIndex);
-            } else {
-                stopSelf();
-            }
-
-            // A PLAY_NEW_AUDIO action received
-            stopMedia();
-            m_mediaPlayer.reset();
-            initMediaPlayer();
-            updateMetaData();
-            buildNotification(PlaybackStatus.PLAYING);
-        }
-    };
 
     private void register_playNewAudio() {
         IntentFilter filter = new IntentFilter(MainActivity.Broadcast_PLAY_NEW_AUDIO);
@@ -553,13 +558,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     @SuppressWarnings("UnusedReturnValue")
     private boolean removeAudioFocus() {
         return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == m_audioManager.abandonAudioFocus(this);
-    }
-
-
-    public class LocalBinder extends Binder {
-        public MediaPlayerService getService() {
-            return MediaPlayerService.this;
-        }
     }
 
 }
