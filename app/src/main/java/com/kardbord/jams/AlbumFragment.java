@@ -28,7 +28,16 @@ public class AlbumFragment extends Fragment {
 
     private Button m_backButton;
 
+    private MediaGetter m_callback;
+
     private ListView m_listView;
+
+    private ArrayList<String> m_albums = new ArrayList<>();
+
+    private HashSet<String> m_hashedAlbums = new HashSet<>();
+
+    // Key is song title, value is that song's position in m_audioList
+    private Hashtable<String, Integer> m_hashedSongs = new Hashtable<>();
 
     public AlbumFragment() {
         // Required empty public constructor
@@ -38,7 +47,7 @@ public class AlbumFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (!(context instanceof MediaGetter)) throw new AssertionError();
-        MediaGetter m_callback = (MediaGetter) context;
+        m_callback = (MediaGetter) context;
         m_audioList = m_callback.getAudioList();
     }
 
@@ -49,10 +58,12 @@ public class AlbumFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_album, container, false);
         m_listView = v.findViewById(R.id.albumList);
 
+        initSongData();
+
         m_backButton = v.findViewById(R.id.album_frag_back_button);
         setButtonProperties(View.INVISIBLE, false);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_selectable_list_item, getAlbums());
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_selectable_list_item, m_albums);
 
         m_listView.setAdapter(adapter);
         m_listView.setOnItemClickListener(albumClickListener);
@@ -65,22 +76,30 @@ public class AlbumFragment extends Fragment {
         m_backButton.setClickable(clickable);
     }
 
-    private ArrayList<String> getAlbums() {
-        Hashtable<String, String> hashedAlbums = new Hashtable<>();
+    private void initSongData() {
+        getAlbums();
+    }
+
+    private void getAlbums() {
         for (Audio a : m_audioList) {
-            if (!a.albumUnknown()) hashedAlbums.put(a.getAlbum(), a.getAlbum());
+            if (!a.albumUnknown()) m_hashedAlbums.add(a.getAlbum());
         }
-        ArrayList<String> albums = new ArrayList<>(hashedAlbums.values());
-        Collections.sort(albums);
-        return albums;
+        m_albums = new ArrayList<>(m_hashedAlbums);
+        Collections.sort(m_albums);
     }
 
     private ArrayList<String> getSongs(String album) {
-        HashSet<String> hashedSongs = new HashSet<>();
-        for (Audio a : m_audioList) {
-            if (!a.titleUnknown() && Objects.equals(a.getAlbum(), album)) hashedSongs.add(a.getTitle());
+        m_hashedSongs = new Hashtable<>();
+        ArrayList<String> songs = new ArrayList<>();
+        for (int i = 0; i < m_audioList.size(); ++i) {
+            if (!m_audioList.get(i).titleUnknown() && Objects.equals(m_audioList.get(i).getAlbum(), album)
+                    && !m_audioList.get(i).containsUnknown()){
+                if (!m_hashedSongs.containsKey(m_audioList.get(i).getTitle())) {
+                    songs.add(m_audioList.get(i).getTitle());
+                }
+                m_hashedSongs.put(m_audioList.get(i).getTitle(), i);
+            }
         }
-        ArrayList<String> songs = new ArrayList<>(hashedSongs);
         Collections.sort(songs);
         return songs;
     }
@@ -88,7 +107,7 @@ public class AlbumFragment extends Fragment {
     private View.OnClickListener backToAlbumOnClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_selectable_list_item, getAlbums());
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_selectable_list_item, m_albums);
             m_listView.setAdapter(adapter);
             setButtonProperties(View.INVISIBLE, false);
             m_listView.setOnItemClickListener(albumClickListener);
@@ -102,8 +121,16 @@ public class AlbumFragment extends Fragment {
             String album = m_listView.getItemAtPosition(position).toString();
             ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_selectable_list_item, getSongs(album));
             m_listView.setAdapter(adapter);
-            // TODO: set m_listView click listener to play the selected song
+            m_listView.setOnItemClickListener(onSongClicked);
             m_backButton.setOnClickListener(backToAlbumOnClick);
+        }
+    };
+
+    AdapterView.OnItemClickListener onSongClicked = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            String title = m_listView.getItemAtPosition(position).toString();
+            m_callback.playMedia(m_hashedSongs.get(title));
         }
     };
 
