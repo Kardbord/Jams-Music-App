@@ -341,7 +341,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
         Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.albumart); // TODO: replace with album art
 
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+        android.support.v7.app.NotificationCompat.Builder notificationBuilder  = (android.support.v7.app.NotificationCompat.Builder) new android.support.v7.app.NotificationCompat.Builder(this)
                 .setShowWhen(false)
                 .setStyle(new android.support.v7.app.NotificationCompat.MediaStyle().setMediaSession(mediaSession.getSessionToken()).setShowActionsInCompactView(0, 1, 2))
                 .setColor(getResources().getColor(R.color.primaryColor))
