@@ -99,8 +99,6 @@ public class MainActivity extends AppCompatActivity implements MediaGetter {
             MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
             m_player = binder.getService();
             m_serviceBound = true;
-
-            Toast.makeText(MainActivity.this, "Service Bound", Toast.LENGTH_SHORT).show();
         }
 
         @Override
