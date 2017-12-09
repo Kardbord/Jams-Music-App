@@ -477,11 +477,16 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        // Invoked when playback of a media source has completed
-        stopMedia();
-        removeNotification();
-        // Stop the service
-        stopSelf();
+        //// Invoked when playback of a media source has completed
+        //stopMedia();
+        //removeNotification();
+        //// Stop the service
+        //stopSelf();
+
+        // Play next song
+        // TODO: make this play the next song based on artist rather than just the database of music; maybe using an interface?
+        skipToNext();
+        buildNotification(PlaybackStatus.PLAYING);
     }
 
     @Override
