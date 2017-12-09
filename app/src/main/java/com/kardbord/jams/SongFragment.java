@@ -71,9 +71,11 @@ public class SongFragment extends Fragment {
 
     private void initSongData() {
         for (int i = 0; i < m_audioList.size(); ++i) {
-            if (!m_audioList.get(i).titleUnknown()) {
+            if (!m_audioList.get(i).titleUnknown() && !m_audioList.get(i).containsUnknown()) {
+                if (!m_hashedSongs.containsKey(m_audioList.get(i).getTitle())) {
+                    m_songs.add(m_audioList.get(i).getTitle());
+                }
                 m_hashedSongs.put(m_audioList.get(i).getTitle(), i);
-                m_songs.add(m_audioList.get(i).getTitle());
             }
         }
         Collections.sort(m_songs);
