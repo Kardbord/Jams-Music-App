@@ -57,6 +57,13 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         new StorageUtil(getApplicationContext()).clearCachedAudioPlaylist();
     }
 
+    @Override
+    public boolean onUnbind(Intent intent) {
+        mediaSession.release();
+        removeNotification();
+        return super.onUnbind(intent);
+    }
+
     // System calls this method when an activity requests the service be started
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -402,7 +409,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
 
     private void initMediaPlayer() {
-        m_mediaPlayer = new MediaPlayer();
+        if (m_mediaPlayer == null) {
+            m_mediaPlayer = new MediaPlayer();
+        }
         // Set up MediaPlayer event listeners
         m_mediaPlayer.setOnCompletionListener(this);
         m_mediaPlayer.setOnErrorListener(this);
@@ -420,6 +429,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             e.printStackTrace();
             stopSelf();
         }
+        m_mediaPlayer.prepareAsync();
     }
 
     private void playMedia() {
@@ -464,6 +474,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     public void onCompletion(MediaPlayer mp) {
         // Invoked when playback of a media source has completed
         stopMedia();
+        removeNotification();
         // Stop the service
         stopSelf();
     }
