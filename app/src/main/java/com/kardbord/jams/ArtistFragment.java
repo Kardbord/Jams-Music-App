@@ -32,6 +32,12 @@ public class ArtistFragment extends Fragment {
 
     private String m_mostRecentArtist;
 
+    private Hashtable<String, Integer> m_hashedSongs = new Hashtable<>();
+
+    private ArrayList<String> m_songs = new ArrayList<>();
+
+    private MediaGetter m_callback;
+
     public ArtistFragment() {
         // Required empty public constructor
     }
@@ -40,7 +46,7 @@ public class ArtistFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (!(context instanceof MediaGetter)) throw new AssertionError();
-        MediaGetter m_callback = (MediaGetter) context;
+        m_callback = (MediaGetter) context;
         m_audioList = m_callback.getAudioList();
     }
 
@@ -86,7 +92,7 @@ public class ArtistFragment extends Fragment {
             String album = m_listView.getItemAtPosition(position).toString();
             ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_selectable_list_item, getSongs(album));
             m_listView.setAdapter(adapter);
-            // TODO: set m_listView click listener to play the selected song
+            m_listView.setOnItemClickListener(onSongClicked);
             m_backButton.setOnClickListener(backToAlbumOnClick);
         }
     };
@@ -110,12 +116,25 @@ public class ArtistFragment extends Fragment {
         }
     };
 
-    private ArrayList<String> getSongs(String album) {
-        HashSet<String> hashedSongs = new HashSet<>();
-        for (Audio a : m_audioList) {
-            if (!a.titleUnknown() && Objects.equals(a.getAlbum(), album)) hashedSongs.add(a.getTitle());
+    AdapterView.OnItemClickListener onSongClicked = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            String title = m_listView.getItemAtPosition(position).toString();
+            m_callback.playMedia(m_hashedSongs.get(title));
         }
-        ArrayList<String> songs = new ArrayList<>(hashedSongs);
+    };
+
+    private ArrayList<String> getSongs(String album) {
+        ArrayList<String> songs = new ArrayList<>();
+        for (int i = 0; i < m_audioList.size(); ++i) {
+            Audio song = m_audioList.get(i);
+            if (!song.titleUnknown() && Objects.equals(song.getAlbum(), album) && !song.containsUnknown()) {
+                if (!m_hashedSongs.containsKey(song.getTitle())) {
+                    songs.add(song.getTitle());
+                }
+                m_hashedSongs.put(song.getTitle(), i);
+            }
+        }
         Collections.sort(songs);
         return songs;
     }
