@@ -7,7 +7,7 @@
         <item name="colorAccent">@color/secondaryColor</item>
         <item name="android:windowBackground">@color/backgroundColor</item>
         <item name="android:navigationBarColor">@color/secondaryDarkColor</item>
-        <item name="android:textColorPrimary">@color/primaryTextColor</item>
+        <item name="android:textColorPrimary">@color/primaryDarkColor</item>
     </style>
 
 </resources>
