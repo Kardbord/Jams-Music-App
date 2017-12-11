@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,9 +25,13 @@ import java.util.Objects;
  */
 public class ArtistFragment extends Fragment {
 
+    private final int HEADING_CHAR_LIMIT = 32;
+
     private Button m_backButton;
 
     private ArrayList<Audio> m_audioList;
+
+    private TextView m_heading;
 
     private ListView m_listView;
 
@@ -55,13 +60,15 @@ public class ArtistFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_artist, container, false);
         m_listView = v.findViewById(R.id.artistList);
 
+        m_heading = v.findViewById(R.id.artist_frag_heading);
+
         m_backButton = v.findViewById(R.id.artist_frag_back_button);
         setButtonProperties(View.INVISIBLE, false);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_selectable_list_item, getArtists());
         m_listView.setAdapter(adapter);
 
-        m_listView.setOnItemClickListener(artistClickListener);
+        m_listView.setOnItemClickListener(onArtistClicked);
 
         return v;
     }
@@ -71,46 +78,57 @@ public class ArtistFragment extends Fragment {
         m_backButton.setVisibility(visibiltity);
     }
 
-    private AdapterView.OnItemClickListener artistClickListener = new AdapterView.OnItemClickListener() {
+    private AdapterView.OnItemClickListener onArtistClicked = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             String artist = m_listView.getItemAtPosition(position).toString();
             m_mostRecentArtist = artist;
             ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_selectable_list_item, getAlbums(artist));
             m_listView.setAdapter(adapter);
-            m_listView.setOnItemClickListener(albumClickListener);
+            m_listView.setOnItemClickListener(onAlbumClicked);
+            if (!textIsTooLong(artist)) {
+                m_heading.setText(artist);
+            } else m_heading.setText(R.string.albums);
             setButtonProperties(View.VISIBLE, true);
-            m_backButton.setOnClickListener(backToArtistOnClick);
+            m_backButton.setOnClickListener(backToArtistsOnClick);
         }
     };
 
-    private AdapterView.OnItemClickListener albumClickListener = new AdapterView.OnItemClickListener() {
+    private AdapterView.OnItemClickListener onAlbumClicked = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             String album = m_listView.getItemAtPosition(position).toString();
             ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_selectable_list_item, getSongs(album));
             m_listView.setAdapter(adapter);
+            if (!textIsTooLong(album)) {
+                m_heading.setText(album);
+            } else m_heading.setText(R.string.songs);
             m_listView.setOnItemClickListener(onSongClicked);
-            m_backButton.setOnClickListener(backToAlbumOnClick);
+            m_backButton.setOnClickListener(backToAlbumsOnClick);
         }
     };
 
-    private View.OnClickListener backToArtistOnClick = new View.OnClickListener() {
+    private View.OnClickListener backToArtistsOnClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             setButtonProperties(View.INVISIBLE, false);
             ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_selectable_list_item, getArtists());
             m_listView.setAdapter(adapter);
-            m_listView.setOnItemClickListener(artistClickListener);
+            m_heading.setText(R.string.artists);
+            m_listView.setOnItemClickListener(onArtistClicked);
         }
     };
 
-    private View.OnClickListener backToAlbumOnClick = new View.OnClickListener() {
+    private View.OnClickListener backToAlbumsOnClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_selectable_list_item, getAlbums(m_mostRecentArtist));
             m_listView.setAdapter(adapter);
-            m_backButton.setOnClickListener(backToArtistOnClick);
+            if (!textIsTooLong(m_mostRecentArtist)) {
+                m_heading.setText(m_mostRecentArtist);
+            } else m_heading.setText(R.string.albums);
+            m_listView.setOnItemClickListener(onAlbumClicked);
+            m_backButton.setOnClickListener(backToArtistsOnClick);
         }
     };
 
@@ -123,6 +141,7 @@ public class ArtistFragment extends Fragment {
     };
 
     private ArrayList<String> getSongs(String album) {
+        m_hashedSongs.clear();
         ArrayList<String> songs = new ArrayList<>();
         for (int i = 0; i < m_audioList.size(); ++i) {
             Audio song = m_audioList.get(i);
@@ -145,6 +164,11 @@ public class ArtistFragment extends Fragment {
         ArrayList<String> artistAlbums = new ArrayList<>(hashedAlbums);
         Collections.sort(artistAlbums);
         return artistAlbums;
+    }
+
+    // Checks to see if heading text is too long to fit on a line with the back button
+    private boolean textIsTooLong(String text) {
+        return (text.length() > HEADING_CHAR_LIMIT);
     }
 
 
