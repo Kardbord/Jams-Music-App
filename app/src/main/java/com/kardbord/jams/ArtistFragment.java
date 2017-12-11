@@ -34,8 +34,6 @@ public class ArtistFragment extends Fragment {
 
     private Hashtable<String, Integer> m_hashedSongs = new Hashtable<>();
 
-    private ArrayList<String> m_songs = new ArrayList<>();
-
     private MediaGetter m_callback;
 
     public ArtistFragment() {
