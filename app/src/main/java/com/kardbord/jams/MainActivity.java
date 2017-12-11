@@ -19,7 +19,7 @@ import android.view.MenuItem;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
-public class MainActivity extends AppCompatActivity implements MediaGetter {
+public class MainActivity extends AppCompatActivity implements MediaInterface {
 
     private ArrayList<Audio> m_audioList;
 

@@ -23,7 +23,7 @@ public class SongFragment extends Fragment {
 
     private ArrayList<Audio> m_audioList;
 
-    private MediaGetter m_callback;
+    private MediaInterface m_callback;
 
     private ListView m_listView;
 
@@ -39,8 +39,8 @@ public class SongFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (!(context instanceof MediaGetter)) throw new AssertionError();
-        m_callback = (MediaGetter) context;
+        if (!(context instanceof MediaInterface)) throw new AssertionError();
+        m_callback = (MediaInterface) context;
         m_audioList = m_callback.getAudioList();
     }
 

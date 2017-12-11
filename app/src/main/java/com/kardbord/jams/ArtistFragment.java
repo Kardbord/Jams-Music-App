@@ -39,7 +39,7 @@ public class ArtistFragment extends Fragment {
 
     private Hashtable<String, Integer> m_hashedSongs = new Hashtable<>();
 
-    private MediaGetter m_callback;
+    private MediaInterface m_callback;
 
     public ArtistFragment() {
         // Required empty public constructor
@@ -48,8 +48,8 @@ public class ArtistFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (!(context instanceof MediaGetter)) throw new AssertionError();
-        m_callback = (MediaGetter) context;
+        if (!(context instanceof MediaInterface)) throw new AssertionError();
+        m_callback = (MediaInterface) context;
         m_audioList = m_callback.getAudioList();
     }
 

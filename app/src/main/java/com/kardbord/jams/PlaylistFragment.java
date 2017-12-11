@@ -30,8 +30,8 @@ public class PlaylistFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (!(context instanceof MediaGetter)) throw new AssertionError();
-        MediaGetter m_callback = (MediaGetter) context;
+        if (!(context instanceof MediaInterface)) throw new AssertionError();
+        MediaInterface m_callback = (MediaInterface) context;
         m_audioList = m_callback.getAudioList();
     }
 
