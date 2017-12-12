@@ -52,7 +52,6 @@ public class AlbumFragment extends Fragment {
         super.onAttach(context);
         if (!(context instanceof MediaInterface)) throw new AssertionError();
         m_callback = (MediaInterface) context;
-        m_audioList = m_callback.getAudioList();
     }
 
 
@@ -92,6 +91,10 @@ public class AlbumFragment extends Fragment {
         }
         m_albums = new ArrayList<>(m_hashedAlbums);
         Collections.sort(m_albums);
+    }
+
+    public void setAudioList(ArrayList<Audio> audioList) {
+        m_audioList = audioList;
     }
 
     private ArrayList<String> getSongs(String album) {

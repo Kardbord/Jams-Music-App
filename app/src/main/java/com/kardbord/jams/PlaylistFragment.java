@@ -32,9 +32,11 @@ public class PlaylistFragment extends Fragment {
         super.onAttach(context);
         if (!(context instanceof MediaInterface)) throw new AssertionError();
         MediaInterface m_callback = (MediaInterface) context;
-        m_audioList = m_callback.getAudioList();
     }
 
+    public void setAudioList(ArrayList<Audio> audioList) {
+        m_audioList = audioList;
+    }
 
     public PlaylistFragment() {
         // Required empty public constructor

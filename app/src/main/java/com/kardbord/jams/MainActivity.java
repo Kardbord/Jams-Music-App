@@ -90,8 +90,12 @@ public class MainActivity extends AppCompatActivity implements MediaInterface {
         m_fragments.put(SONG_FRAG, songFragment);
         m_fragments.put(PLAYLIST_FRAG, playlistFragment);
 
+        artistFragment.setAudioList(m_audioList);
+        albumFragment.setAudioList(m_audioList);
+        songFragment.setAudioList(m_audioList);
+        playlistFragment.setAudioList(m_audioList);
+
         // Manually set first fragment
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, m_fragments.get(SONG_FRAG)).commit(); // must be loaded
         getSupportFragmentManager().beginTransaction().replace(R.id.container, m_fragments.get(ARTIST_FRAG)).commit();
     }
 

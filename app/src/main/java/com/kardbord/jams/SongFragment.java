@@ -36,12 +36,15 @@ public class SongFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public void setAudioList(ArrayList<Audio> audioList) {
+        m_audioList = audioList;
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (!(context instanceof MediaInterface)) throw new AssertionError();
         m_callback = (MediaInterface) context;
-        m_audioList = m_callback.getAudioList();
     }
 
 

@@ -50,9 +50,11 @@ public class ArtistFragment extends Fragment {
         super.onAttach(context);
         if (!(context instanceof MediaInterface)) throw new AssertionError();
         m_callback = (MediaInterface) context;
-        m_audioList = m_callback.getAudioList();
     }
 
+    public void setAudioList(ArrayList<Audio> audioList) {
+        m_audioList = audioList;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
