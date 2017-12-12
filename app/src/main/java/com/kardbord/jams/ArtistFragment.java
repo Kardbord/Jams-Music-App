@@ -33,6 +33,8 @@ public class ArtistFragment extends Fragment {
 
     private TextView m_heading;
 
+    private String m_currentAlbum;
+
     private ListView m_listView;
 
     private String m_mostRecentArtist;
@@ -97,11 +99,11 @@ public class ArtistFragment extends Fragment {
     private AdapterView.OnItemClickListener onAlbumClicked = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            String album = m_listView.getItemAtPosition(position).toString();
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_selectable_list_item, getSongs(album));
+            m_currentAlbum = m_listView.getItemAtPosition(position).toString();
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_selectable_list_item, getSongs(m_currentAlbum));
             m_listView.setAdapter(adapter);
-            if (!textIsTooLong(album)) {
-                m_heading.setText(album);
+            if (!textIsTooLong(m_currentAlbum)) {
+                m_heading.setText(m_currentAlbum);
             } else m_heading.setText(R.string.songs);
             m_listView.setOnItemClickListener(onSongClicked);
             m_backButton.setOnClickListener(backToAlbumsOnClick);
@@ -136,7 +138,7 @@ public class ArtistFragment extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             String title = m_listView.getItemAtPosition(position).toString();
-            m_callback.playMedia(m_hashedSongs.get(title));
+            m_callback.playAlbum(title, m_currentAlbum);
         }
     };
 
