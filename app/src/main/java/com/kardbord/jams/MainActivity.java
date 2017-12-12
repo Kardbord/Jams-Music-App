@@ -18,6 +18,7 @@ import android.view.MenuItem;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements MediaInterface {
 
@@ -25,6 +26,8 @@ public class MainActivity extends AppCompatActivity implements MediaInterface {
 
     private MediaPlayerService m_player;
     boolean m_serviceBound = false;
+
+    private boolean m_playingAlbum = false;
 
     public static final String Broadcast_PLAY_NEW_AUDIO = "com.kardbord.jams.PlayNewAudio";
 
@@ -94,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements MediaInterface {
     private ServiceConnection m_serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            // We've bound to LocalService, case the IBinder and et LocalService instance
+            // We've bound to LocalService, case the IBinder and get LocalService instance
             MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
             m_player = binder.getService();
             m_serviceBound = true;
@@ -171,6 +174,26 @@ public class MainActivity extends AppCompatActivity implements MediaInterface {
         if (cursor != null) cursor.close();
     }
 
+    private Hashtable<String, Integer> loadAlbum(String album) {
+        ArrayList<Audio> albumTracks = new ArrayList<>();
+
+        // Key is song title, value is position in m_audioList
+        Hashtable<String, Integer> hashedAlbum = new Hashtable<>();
+
+        int index = 0;
+        for (Audio a : m_audioList) {
+            if (Objects.equals(album, a.getAlbum()) && !a.containsUnknown()) {
+                if (!hashedAlbum.containsKey(a.getTitle())) {
+                    albumTracks.add(a);
+                    hashedAlbum.put(a.getTitle(), index);
+                    ++index;
+                }
+            }
+        }
+        m_audioList = albumTracks;
+        return hashedAlbum;
+    }
+
     @Override
     public ArrayList<Audio> getAudioList() {
         return m_audioList;
@@ -178,6 +201,30 @@ public class MainActivity extends AppCompatActivity implements MediaInterface {
 
     @Override
     public void playMedia(int audioIndex) {
+        if (m_playingAlbum) {
+            // load all songs instead of just an album
+            loadAudio();
+            // set m_serviceBound to false so playAudio() will store the newly loaded audio
+            m_serviceBound = false;
+            unbindService(m_serviceConnection);
+            m_player.stopSelf();
+        }
         playAudio(audioIndex);
     }
+
+    @Override
+    public void playAlbum(String title, String album) {
+        m_playingAlbum = true;
+
+        // Key is song title, value is position in m_audioList
+        Hashtable<String, Integer> hashedAlbum = loadAlbum(album);
+
+        if (m_serviceBound) {
+            unbindService(m_serviceConnection);
+            m_player.stopSelf();
+            m_serviceBound = false;
+        }
+        playAudio(hashedAlbum.get(title));
+    }
+
 }

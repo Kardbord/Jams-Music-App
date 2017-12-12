@@ -31,6 +31,8 @@ public class AlbumFragment extends Fragment {
 
     private TextView m_heading;
 
+    private String m_currentAlbum;
+
     private final int HEADING_CHAR_LIMIT = 32;
 
     private MediaInterface m_callback;
@@ -42,7 +44,7 @@ public class AlbumFragment extends Fragment {
     private HashSet<String> m_hashedAlbums = new HashSet<>();
 
     // Key is song title, value is that song's position in m_audioList
-    private Hashtable<String, Integer> m_hashedSongs = new Hashtable<>();
+    private Hashtable<String, Integer> m_hashedSongs = new Hashtable<>(); // TODO: delete member
 
     public AlbumFragment() {
         // Required empty public constructor
@@ -126,11 +128,11 @@ public class AlbumFragment extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             setButtonProperties(View.VISIBLE, true);
-            String album = m_listView.getItemAtPosition(position).toString();
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_selectable_list_item, getSongs(album));
+            m_currentAlbum = m_listView.getItemAtPosition(position).toString();
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_selectable_list_item, getSongs(m_currentAlbum));
             m_listView.setAdapter(adapter);
-            if (!textIsTooLong(album)) {
-                m_heading.setText(album);
+            if (!textIsTooLong(m_currentAlbum)) {
+                m_heading.setText(m_currentAlbum);
             } else m_heading.setText(R.string.songs);
             m_listView.setOnItemClickListener(onSongClicked);
             m_backButton.setOnClickListener(backToAlbumsOnClick);
@@ -141,7 +143,7 @@ public class AlbumFragment extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             String title = m_listView.getItemAtPosition(position).toString();
-            m_callback.playMedia(m_hashedSongs.get(title));
+            m_callback.playAlbum(title, m_currentAlbum);
         }
     };
 
