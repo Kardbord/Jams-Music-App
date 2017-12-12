@@ -10,8 +10,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
+        android:clickable="false"
         android:text="@string/create_new_playlist" />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/secondaryTextColor"
+            android:layout_centerInParent="true"
+            android:text="@string/coming_soon"/>
+
+    </RelativeLayout>
+
+    <!--
     <ListView
         android:id="@+id/playlistList"
         android:layout_gravity="bottom"
@@ -19,5 +34,6 @@
         android:layout_height="wrap_content">
 
     </ListView>
+    -->
 
 </LinearLayout>

@@ -55,10 +55,9 @@ public class PlaylistFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_playlist, container, false);
-        m_listView = v.findViewById(R.id.playlistList);
+        // m_listView = v.findViewById(R.id.playlistList); // TODO: uncomment these lines
+        // populateListView();
         m_playlists = new Hashtable<>();
-
-        populateListView();
 
         Button playlistButton = v.findViewById(R.id.addPlayListButton);
         playlistButton.setOnClickListener(new View.OnClickListener() {
