@@ -43,9 +43,6 @@ public class AlbumFragment extends Fragment {
 
     private HashSet<String> m_hashedAlbums = new HashSet<>();
 
-    // Key is song title, value is that song's position in m_audioList
-    private Hashtable<String, Integer> m_hashedSongs = new Hashtable<>(); // TODO: delete member
-
     public AlbumFragment() {
         // Required empty public constructor
     }
@@ -98,15 +95,15 @@ public class AlbumFragment extends Fragment {
     }
 
     private ArrayList<String> getSongs(String album) {
-        m_hashedSongs = new Hashtable<>();
+        Hashtable<String, Integer> hashedSongs = new Hashtable<>();
         ArrayList<String> songs = new ArrayList<>();
         for (int i = 0; i < m_audioList.size(); ++i) {
             if (!m_audioList.get(i).titleUnknown() && Objects.equals(m_audioList.get(i).getAlbum(), album)
                     && !m_audioList.get(i).containsUnknown()){
-                if (!m_hashedSongs.containsKey(m_audioList.get(i).getTitle())) {
+                if (!hashedSongs.containsKey(m_audioList.get(i).getTitle())) {
                     songs.add(m_audioList.get(i).getTitle());
                 }
-                m_hashedSongs.put(m_audioList.get(i).getTitle(), i);
+                hashedSongs.put(m_audioList.get(i).getTitle(), i);
             }
         }
         Collections.sort(songs);

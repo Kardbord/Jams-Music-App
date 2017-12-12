@@ -39,8 +39,6 @@ public class ArtistFragment extends Fragment {
 
     private String m_mostRecentArtist;
 
-    private Hashtable<String, Integer> m_hashedSongs = new Hashtable<>();
-
     private MediaInterface m_callback;
 
     public ArtistFragment() {
@@ -143,15 +141,15 @@ public class ArtistFragment extends Fragment {
     };
 
     private ArrayList<String> getSongs(String album) {
-        m_hashedSongs.clear();
+        Hashtable<String, Integer> hashedSongs = new Hashtable<>();
         ArrayList<String> songs = new ArrayList<>();
         for (int i = 0; i < m_audioList.size(); ++i) {
             Audio song = m_audioList.get(i);
             if (!song.titleUnknown() && Objects.equals(song.getAlbum(), album) && !song.containsUnknown()) {
-                if (!m_hashedSongs.containsKey(song.getTitle())) {
+                if (!hashedSongs.containsKey(song.getTitle())) {
                     songs.add(song.getTitle());
                 }
-                m_hashedSongs.put(song.getTitle(), i);
+                hashedSongs.put(song.getTitle(), i);
             }
         }
         Collections.sort(songs);
