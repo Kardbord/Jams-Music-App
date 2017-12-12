@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements MediaInterface {
         m_fragments.put(PLAYLIST_FRAG, playlistFragment);
 
         // Manually set first fragment
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, m_fragments.get(SONG_FRAG)).commit(); // must be loaded
         getSupportFragmentManager().beginTransaction().replace(R.id.container, m_fragments.get(ARTIST_FRAG)).commit();
     }
 
@@ -144,6 +145,7 @@ public class MainActivity extends AppCompatActivity implements MediaInterface {
         } else {
             // Store the new audioIndex to SharedPreferences
             StorageUtil storage = new StorageUtil(getApplicationContext());
+            storage.storeAudio(m_audioList);
             storage.storeAudioIndex(audioIndex);
 
             // Service is active
@@ -204,26 +206,21 @@ public class MainActivity extends AppCompatActivity implements MediaInterface {
         if (m_playingAlbum) {
             // load all songs instead of just an album
             loadAudio();
-            // set m_serviceBound to false so playAudio() will store the newly loaded audio
-            m_serviceBound = false;
-            unbindService(m_serviceConnection);
-            m_player.stopSelf();
         }
         playAudio(audioIndex);
     }
 
     @Override
     public void playAlbum(String title, String album) {
+        if (m_playingAlbum) {
+            loadAudio();
+        }
+
         m_playingAlbum = true;
 
         // Key is song title, value is position in m_audioList
         Hashtable<String, Integer> hashedAlbum = loadAlbum(album);
 
-        if (m_serviceBound) {
-            unbindService(m_serviceConnection);
-            m_player.stopSelf();
-            m_serviceBound = false;
-        }
         playAudio(hashedAlbum.get(title));
     }
 

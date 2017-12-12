@@ -85,7 +85,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     private BroadcastReceiver playNewAudio = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            audioIndex = new StorageUtil(getApplicationContext()).loadAudioIndex();
+            StorageUtil storage = new StorageUtil(getApplicationContext());
+            audioList = storage.loadAudio();
+            audioIndex = storage.loadAudioIndex();
             if (audioIndex != -1 && audioIndex < audioList.size()) {
                 activeAudio = audioList.get(audioIndex);
             } else {
