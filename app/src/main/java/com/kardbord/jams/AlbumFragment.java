@@ -109,7 +109,6 @@ public class AlbumFragment extends Fragment {
                 hashedSongs.put(m_audioList.get(i).getTitle(), i);
             }
         }
-        Collections.sort(songs);
         return songs;
     }
 

@@ -154,7 +154,6 @@ public class ArtistFragment extends Fragment {
                 hashedSongs.put(song.getTitle(), i);
             }
         }
-        Collections.sort(songs);
         return songs;
     }
 
