@@ -160,6 +160,11 @@ public class MainActivity extends AppCompatActivity implements MediaInterface {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        // Do nothing
+    }
+
     private void loadAudio() {
         ContentResolver contentResolver = getContentResolver();
 
