@@ -2,6 +2,7 @@ package com.kardbord.jams;
 
 import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -174,7 +175,12 @@ public class MainActivity extends AppCompatActivity implements MediaInterface {
                 String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
                 String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
                 String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                m_audioList.add(new Audio(data, title, album, artist));
+                Long album_id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID));
+
+                Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
+                Uri albumArtUri = ContentUris.withAppendedId(sArtworkUri, album_id);
+
+                m_audioList.add(new Audio(data, title, album, artist, albumArtUri.toString()));
             }
         }
         if (cursor != null) cursor.close();

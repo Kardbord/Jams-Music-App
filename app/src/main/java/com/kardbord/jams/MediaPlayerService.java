@@ -15,6 +15,7 @@ import android.media.session.MediaSessionManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
@@ -23,6 +24,7 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -281,13 +283,29 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     }
 
     private void updateMetaData() {
-        Bitmap albumArt = BitmapFactory.decodeResource(getResources(), R.drawable.albumart); // TODO: replace with medias album art
         mediaSession.setMetadata(new MediaMetadataCompat.Builder()
-                .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, albumArt)
+                .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, getAlbumArt())
                 .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, activeAudio.getArtist())
                 .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, activeAudio.getAlbum())
                 .putString(MediaMetadataCompat.METADATA_KEY_TITLE, activeAudio.getTitle())
                 .build());
+    }
+
+    private Bitmap getAlbumArt() {
+        // https://stackoverflow.com/questions/13678391/get-album-art-with-album-name-android
+        Bitmap albumArt = null;
+        try {
+            albumArt = MediaStore.Images.Media.getBitmap(getContentResolver(), activeAudio.getAlbumArtUri());
+            albumArt = Bitmap.createScaledBitmap(albumArt, 30, 30, true);
+
+        } catch (FileNotFoundException exception) {
+            exception.printStackTrace();
+            albumArt = BitmapFactory.decodeResource(getResources(),
+                    R.drawable.albumart);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return albumArt;
     }
 
     private void skipToNext() {
@@ -346,7 +364,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             play_pauseAction = playbackAction(0);
         }
 
-        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.albumart); // TODO: replace with album art
+        Bitmap largeIcon = getAlbumArt();
 
         android.support.v7.app.NotificationCompat.Builder notificationBuilder  = (android.support.v7.app.NotificationCompat.Builder) new android.support.v7.app.NotificationCompat.Builder(this)
                 .setShowWhen(false)
@@ -486,7 +504,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         //stopSelf();
 
         // Play next song
-        // TODO: make this play the next song based on artist rather than just the database of music; maybe using an interface?
         skipToNext();
         buildNotification(PlaybackStatus.PLAYING);
     }

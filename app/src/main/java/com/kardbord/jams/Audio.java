@@ -1,5 +1,6 @@
 package com.kardbord.jams;
 
+import android.net.Uri;
 import android.provider.MediaStore;
 
 import java.io.Serializable;
@@ -15,12 +16,14 @@ public class Audio implements Serializable {
     private String m_title;
     private String m_album;
     private String m_artist;
+    private String m_albumArtUri;
 
-    public Audio(String data, String title, String album, String artist) {
+    public Audio(String data, String title, String album, String artist, String artUri) {
         this.m_data = data;
         this.m_title = title;
         this.m_album = album;
         this.m_artist = artist;
+        this.m_albumArtUri = artUri;
         m_playlists = new Hashtable<>();
     }
 
@@ -58,6 +61,8 @@ public class Audio implements Serializable {
     }
 
     public String getData() { return m_data; }
+
+    public Uri getAlbumArtUri() { return Uri.parse(m_albumArtUri); }
 
     public void setData(String data) { m_data = data; }
 
