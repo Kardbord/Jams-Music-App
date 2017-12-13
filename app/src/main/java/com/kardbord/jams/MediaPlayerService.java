@@ -296,7 +296,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         Bitmap albumArt = null;
         try {
             albumArt = MediaStore.Images.Media.getBitmap(getContentResolver(), activeAudio.getAlbumArtUri());
-            albumArt = Bitmap.createScaledBitmap(albumArt, 30, 30, true);
+            albumArt = Bitmap.createScaledBitmap(albumArt, 1000, 1000, true);
 
         } catch (FileNotFoundException exception) {
             exception.printStackTrace();
