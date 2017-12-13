@@ -138,7 +138,7 @@ public class AlbumFragment extends Fragment {
         }
     };
 
-    AdapterView.OnItemClickListener onSongClicked = new AdapterView.OnItemClickListener() {
+    private AdapterView.OnItemClickListener onSongClicked = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             String title = m_listView.getItemAtPosition(position).toString();

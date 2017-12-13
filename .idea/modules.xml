@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Jams.iml" filepath="$PROJECT_DIR$/Jams.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Jams-Music-App.iml" filepath="$PROJECT_DIR$/Jams-Music-App.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

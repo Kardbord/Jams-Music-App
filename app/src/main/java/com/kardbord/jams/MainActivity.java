@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements MediaInterface {
     private ArrayList<Audio> m_audioList;
 
     private MediaPlayerService m_player;
-    boolean m_serviceBound = false;
+    private boolean m_serviceBound = false;
 
     private boolean m_playingAlbum = false;
 
