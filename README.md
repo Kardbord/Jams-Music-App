@@ -12,8 +12,7 @@ Jams is a music app written for Android. The project was begun for a Mobile Appl
 * Albums will repeat on completion, as will all songs
     * No, you can't turn this off as of yet. It's a feature. :)
 
-## In the Works
-### These features will be implemented in the future:
+## Backlog
 * Audio scrubbing
 * Ability to create and modify playlists
 * Songs in an album will be sorted in the way the artist intended rather than alphabetically
